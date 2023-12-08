@@ -29,7 +29,7 @@ fn main() {
         // Step 3: Do an egui frame with the desired ui function
         sfegui
             .do_frame(|ctx| {
-                let win = egui::Window::new("Hello egui-sfml!");
+                let win = egui::Window::new("Pierogi z jagodami");
                 win.show(ctx, |ui| {
                     ui.horizontal(|ui| {
                         ui.label("Name");
