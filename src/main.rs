@@ -1,3 +1,7 @@
+mod point;
+mod bezier_curve;
+mod plain;
+
 use egui_sfml::{egui, SfEgui};
 use sfml::{
     graphics::{Color, RenderTarget, RenderWindow},
@@ -5,6 +9,9 @@ use sfml::{
 };
 
 fn main() {
+
+
+
     let mut rw = RenderWindow::new(
         (800, 600),
         "Hello egui!",
