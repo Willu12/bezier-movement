@@ -1,4 +1,3 @@
-mod point;
 mod bezier_curve;
 mod plain;
 
@@ -7,9 +6,14 @@ use sfml::{
     graphics::{Color, RenderTarget, RenderWindow},
     window::{ContextSettings, Event, Style},
 };
+use sfml::graphics::{CircleShape, Vertex};
+use crate::bezier_curve::BezierCurve;
 
 fn main() {
 
+    let mut vertices: Vec<Vertex> = vec![];
+    let mut points: Vec<CircleShape> = vec![];
+    let mut bezier_curve: BezierCurve;
 
 
     let mut rw = RenderWindow::new(
