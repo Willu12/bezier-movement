@@ -1,10 +1,11 @@
 use sfml::graphics::{CircleShape, Color, PrimitiveType, RenderStates, RenderTarget, RenderWindow, Shape, Transformable, Vertex};
 use sfml::system::Vector2f;
 use crate::bezier_curve::BezierCurve;
-const STRIP_COLOR: Color = Color::GREEN;
+const STRIP_COLOR: Color = Color::BLUE;
 const POINT_COLOR: Color = Color::RED;
-const CURVE_COLOR: Color = Color::BLUE;
+const CURVE_COLOR: Color = Color::MAGENTA;
 
+#[derive(PartialEq)]
 pub enum State {
     Create,
     Edit
@@ -44,7 +45,7 @@ fn update_bezier_point(bezier_curve: &mut BezierCurve,index: usize, position: Ve
     bezier_curve.update_coefficient(position,index);
 }
 
-pub fn add_node(points: &mut Vec<CircleShape>,vertices: &mut Vec<Vertex>,x:i32, y:i32) {
+pub fn add_node(vertices: &mut Vec<Vertex>,points: &mut Vec<CircleShape>,x:i32, y:i32) {
     let position = Vector2f::new(x as f32, y as f32);
     add_vertex(vertices,position);
     add_point(points,position);
@@ -57,7 +58,7 @@ pub fn render_polyline(vertices: &Vec<Vertex>, window : &mut RenderWindow) {
 
 pub fn render_points(points: &Vec<CircleShape>,window: &mut RenderWindow) {
     for point in points.iter() {
-        window.draw(&(point));
+        window.draw(point);
     }
 }
 
