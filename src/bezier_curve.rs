@@ -15,7 +15,7 @@ impl BezierCurve {
 
     pub fn update_curve(&mut self) {
         self.curve = vec![Vertex::with_pos_color(Vector2f::new(0.0,0.0),
-                                                 Color::BLUE); DISCREET_POINTS];
+                                                 Color::MAGENTA); DISCREET_POINTS];
 
         let dt = 1.0 / DISCREET_POINTS as f32;
         let n = self.x_coefficients.len();
@@ -24,7 +24,7 @@ impl BezierCurve {
             let mut x_coord = 0.0;
             let mut y_coord = 0.0;
             for j in 0..n {
-                let t_val = (1.0 - t_point).powi(n as i32 - j as i32) *
+                let t_val = (1.0 - t_point).powi((n - 1) as i32 - j as i32) *
                     t_point.powi(j as i32);
 
                 x_coord = x_coord + t_val * self.x_coefficients[j];
@@ -60,6 +60,12 @@ impl BezierCurve {
 
     pub fn render(&self, window: &mut RenderWindow) {
         window.draw_primitives(&self.curve,PrimitiveType::POINTS,&RenderStates::default());
+    }
+
+    pub fn clear(&mut self) {
+        self.curve.clear();
+        self.x_coefficients.clear();
+        self.y_coefficients.clear();
     }
 }
 

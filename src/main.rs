@@ -9,7 +9,7 @@ use sfml::{
 };
 use sfml::graphics::{CircleShape, Vertex};
 use crate::bezier_curve::BezierCurve;
-use crate::event_handlers::mouse_click_handler;
+use crate::event_handlers::{build_new_curve, mouse_click_handler, start_creating_new_curve};
 use crate::plain::{render_points, render_polyline, State};
 
 fn main() {
@@ -18,7 +18,7 @@ fn main() {
     let mut vertices: Vec<Vertex> = vec![];
     let mut points: Vec<CircleShape> = vec![];
     let mut bezier_curve: BezierCurve= BezierCurve::new();
-    let mut state: State = State::Create;
+    let mut state: State = State::Edit;
     let mut selected_node_index: usize;
 
     let mut rw = RenderWindow::new(
@@ -44,7 +44,7 @@ fn main() {
                     rw.close();
                 }
                 Event::MouseButtonReleased {button:_, x,y} => {
-                    mouse_click_handler(&mut vertices, &mut points,&mut bezier_curve,&state,x,y);
+                    mouse_click_handler(&mut vertices, &mut points,&mut bezier_curve,state,x,y);
                 }
                 _ => {}
             }
@@ -57,8 +57,13 @@ fn main() {
                     ui.horizontal(|ui| {
                         ui.label("Name");
                         ui.vertical(|ui| {
-                            ui.radio_value(&mut state,State::Create,"Create");
-                            ui.radio_value(&mut state,State::Edit,"Edit");
+                           if ui.button("Create new curve").clicked() {
+                                state = start_creating_new_curve(&mut vertices, &mut points,&mut bezier_curve,state);
+                           }
+
+                            if ui.button("Finish creating curve").clicked() {
+                                state = build_new_curve(&mut vertices, &mut points,&mut bezier_curve,state);
+                            }
                         });
                     });
                 });
@@ -66,11 +71,13 @@ fn main() {
             .unwrap();
         // Step 4: Draw
         rw.clear(Color::rgb(0, 0, 0));
-        render_points(&points,&mut rw);
-        render_polyline(&vertices,&mut rw);
+
         if state == State::Edit {
             bezier_curve.render(&mut rw);
         }
+        render_points(&points,&mut rw);
+        render_polyline(&vertices,&mut rw);
+
 
 
         sfegui.draw(&mut rw, None);

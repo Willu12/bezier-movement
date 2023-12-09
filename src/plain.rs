@@ -5,7 +5,7 @@ const STRIP_COLOR: Color = Color::BLUE;
 const POINT_COLOR: Color = Color::RED;
 const CURVE_COLOR: Color = Color::MAGENTA;
 
-#[derive(PartialEq)]
+#[derive(PartialEq,Copy, Clone)]
 pub enum State {
     Create,
     Edit
