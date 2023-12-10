@@ -1,5 +1,7 @@
 use sfml::graphics::{CircleShape, Vertex};
+use sfml::system::Vector2f;
 use crate::bezier_curve::BezierCurve;
+use crate::image::Image;
 use crate::plain::{add_node, State};
 
 pub fn mouse_click_handler(vertices: &mut Vec<Vertex>, points: &mut Vec<CircleShape>,
@@ -15,11 +17,12 @@ pub fn mouse_click_handler(vertices: &mut Vec<Vertex>, points: &mut Vec<CircleSh
 }
 
 pub fn start_creating_new_curve(vertices: &mut Vec<Vertex>, points: &mut Vec<CircleShape>,
-                                bezier_curve: &mut BezierCurve,state: State) -> State {
+                                bezier_curve: &mut BezierCurve,state: State, mut animating: bool) -> State {
     if state == State::Create {return state}
     vertices.clear();
     points.clear();
     bezier_curve.clear();
+    animating = false;
 
     State::Create
 }

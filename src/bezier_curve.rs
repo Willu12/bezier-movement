@@ -1,16 +1,23 @@
 use sfml::graphics::{Color, PrimitiveType, RenderStates, RenderTarget, RenderWindow, Vertex};
 use sfml::system::{Vector2f};
+use crate::image;
+use crate::image::{Image, RotationKind};
 
-const DISCREET_POINTS: usize = 1_000_000;
+const DISCREET_POINTS: usize = 1_000;
 pub struct BezierCurve {
     pub curve : Vec<Vertex>,
+    pub tanget_curve: Vec<Vector2f>,
     pub x_coefficients: Vec<f32>,
     pub y_coefficients: Vec<f32>,
+    pub image: Image,
+    pub time_index: usize,
 }
 
 impl BezierCurve {
     pub fn new() -> Self {
-        BezierCurve{curve: vec![], x_coefficients:vec![],y_coefficients:vec![]}
+        let image = Image::new("Data/jeden.png",Vector2f::new(-999.0,-999.0));
+        let time_index = 0;
+        BezierCurve{curve: vec![], tanget_curve: vec![],x_coefficients:vec![],y_coefficients:vec![],image,time_index}
     }
 
     pub fn update_curve(&mut self) {
@@ -33,6 +40,7 @@ impl BezierCurve {
             self.curve[i].position = Vector2f::new(x_coord,y_coord);
             t_point = t_point + dt;
         }
+        self.image.move_picture(self.curve[0].position,Vector2f::new(0.0,0.0));
     }
 
     pub fn update_coefficient(&mut self, position: Vector2f, index: usize) {
@@ -58,14 +66,46 @@ impl BezierCurve {
         }
     }
 
+    pub fn move_image(&mut self) {
+        self.time_index  = (self.time_index + 1 ) % self.curve.len();
+        println!("current time index = {} ",self.time_index);
+        self.image.move_picture(self.curve[self.time_index].position,Vector2f::default());
+    }
+
     pub fn render(&self, window: &mut RenderWindow) {
         window.draw_primitives(&self.curve,PrimitiveType::POINTS,&RenderStates::default());
+        self.image.render(window);
     }
+
+    fn rotate_naive(&mut self) {
+        self.image.do_rotate_picture_frame();
+    }
+
+    fn rotate_with_filter(&mut self) {
+
+    }
+
+    pub fn do_frame(&mut self) {
+
+        match self.image.animation {
+            image::Animation::Movement => {
+                self.move_image();
+            }
+            image::Animation::Rotation(RotationKind::Naive) => {
+                self.rotate_naive();
+            }
+            image::Animation::Rotation(RotationKind::WithFiltering) => {
+                self.rotate_with_filter();
+            }
+        }
+    }
+
 
     pub fn clear(&mut self) {
         self.curve.clear();
         self.x_coefficients.clear();
         self.y_coefficients.clear();
+        self.tanget_curve.clear();
     }
 }
 
