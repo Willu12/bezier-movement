@@ -20,7 +20,7 @@ pub fn update_node_position(vertices: &mut Vec<Vertex>,points: &mut Vec<CircleSh
     let position = Vector2f::new(x as f32, y as f32);
     update_vertex_position(&mut vertices[index],position);
     update_point_position(&mut points[index],position);
-    update_bezier_point(bezier_curve,index,position);
+    update_bezier_point(bezier_curve,index,vertices);
 }
 
 fn update_vertex_position(vertex: &mut Vertex, position: Vector2f) {
@@ -41,8 +41,18 @@ pub fn update_bezier(bezier_curve: &mut BezierCurve,vertices: &Vec<Vertex>) {
     bezier_curve.update_coefficients(vertices);
 }
 
-fn update_bezier_point(bezier_curve: &mut BezierCurve,index: usize, position: Vector2f) {
-    bezier_curve.update_coefficient(position,index);
+fn update_bezier_point(bezier_curve: &mut BezierCurve,index: usize,vertices: &Vec<Vertex>) {
+    bezier_curve.update_coefficient(vertices[index].position,index);
+    bezier_curve.update_tangent_coefficient(vertices,index);
+    bezier_curve.update_curve();
+}
+
+pub fn get_selected_point_index(vertices: &Vec<Vertex>,position: Vector2f) -> Option<usize> {
+    for (index,vertex) in vertices.iter().enumerate() {
+        let dist = (vertex.position - position).length_sq().sqrt();
+        if dist <= (6.0 + 10.0) {return Some(index)}
+    }
+    return None;
 }
 
 pub fn add_node(vertices: &mut Vec<Vertex>,points: &mut Vec<CircleShape>,x:i32, y:i32) {
@@ -60,6 +70,22 @@ pub fn render_points(points: &Vec<CircleShape>,window: &mut RenderWindow) {
     for point in points.iter() {
         window.draw(point);
     }
+}
+
+pub fn select_point(point_index: Option<usize>,points: &mut Vec<CircleShape>) {
+    if let Some(index) = point_index {
+        let radius = points[index].radius();
+        let mut position = points[index].position();
+        position.x = position.x - radius/ 2.0;
+        position.y = position.y - radius / 2.0;
+        points[index].set_radius(2.0 * radius);
+        points[index].set_position(position);
+    }
+}
+
+pub fn unselect_point(index: usize, points: &mut Vec<CircleShape>) {
+    let radius = points[index].radius();
+    points[index].set_radius(radius / 2.0);
 }
 
 fn create_point_shape<'a>(position: Vector2f,radius: f32, color: Color) -> CircleShape<'a> {

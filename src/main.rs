@@ -2,6 +2,7 @@ mod bezier_curve;
 mod plain;
 mod event_handlers;
 mod image;
+mod transormations;
 
 use egui_sfml::{egui, SfEgui};
 use sfml::{
@@ -11,7 +12,7 @@ use sfml::{
 use sfml::graphics::{CircleShape, Vertex};
 use sfml::system::Vector2f;
 use crate::bezier_curve::BezierCurve;
-use crate::event_handlers::{build_new_curve, mouse_click_handler, start_creating_new_curve};
+use crate::event_handlers::{build_new_curve, mouse_click_handler, mouse_move_handler, start_creating_new_curve};
 use crate::image::{Animation, RotationKind};
 use crate::image::Animation::{Movement, Rotation};
 use crate::plain::{render_points, render_polyline, State};
@@ -23,7 +24,7 @@ fn main() {
     let mut points: Vec<CircleShape> = vec![];
     let mut bezier_curve: BezierCurve= BezierCurve::new();
     let mut state: State = State::Edit;
-    let mut selected_node_index: usize;
+    let mut selected_node_index: Option<usize> = None;
    // let mut image: image::Image = image::Image::new("Data/jeden.png",Vector2f::new(-1000.0,-1000.0));
     let mut animating: bool = false;
     let mut rotation_kind: RotationKind = RotationKind::Naive;
@@ -56,7 +57,10 @@ fn main() {
                     rw.close();
                 }
                 Event::MouseButtonReleased {button:_, x,y} => {
-                    mouse_click_handler(&mut vertices, &mut points,&mut bezier_curve,state,x,y);
+                   selected_node_index =  mouse_click_handler(&mut vertices, &mut points,&mut bezier_curve,selected_node_index,state,x,y);
+                }
+                Event::MouseMoved {x,y} => {
+                    mouse_move_handler(&mut vertices, &mut points, &mut bezier_curve,selected_node_index,state,x,y);
                 }
                 _ => {}
             }
