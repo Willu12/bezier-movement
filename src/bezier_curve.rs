@@ -63,8 +63,8 @@ impl BezierCurve {
                 y_coord = y_coord + t_val * self.y_tangent_coefficients[j];
 
             }
-            self.tangent_curve[i] = Vector2f::new(x_coord,y_coord);
-            println!("tangent point {}, {}",x_coord,y_coord);
+            self.tangent_curve[i] = Vector2f::new((n+1) as f32* x_coord, (n+1) as f32 * y_coord);
+            //println!("tangent point {}, {}",x_coord,y_coord);
             t_point = t_point + dt;
         }
 
@@ -135,10 +135,6 @@ impl BezierCurve {
         self.image.do_rotate_picture_frame();
     }
 
-    fn rotate_with_filter(&mut self) {
-
-    }
-
     pub fn do_frame(&mut self) {
 
         match self.image.animation {
@@ -149,7 +145,7 @@ impl BezierCurve {
                 self.rotate_naive();
             }
             image::Animation::Rotation(RotationKind::WithFiltering) => {
-                self.rotate_with_filter();
+                self.rotate_naive();
             }
         }
     }

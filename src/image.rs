@@ -4,7 +4,7 @@ use sfml::graphics::{RenderStates, RenderTarget, RenderWindow, Sprite, Texture, 
 use sfml::SfBox;
 use sfml::system::Vector2f;
 use crate::image::Animation::{Movement, Rotation};
-use crate::transormations::transform_from_tangent;
+use crate::transormations::{rotate_with_shear, transform_from_tangent};
 
 const ROTATION_SPEED: f32 = 1.0;
 
@@ -56,25 +56,36 @@ impl Image {
 
     pub fn render(&self,window: &mut RenderWindow) {
         let mut sprite = Sprite::with_texture(&self.texture);
+        sprite.set_scale(Vector2f::new(0.3,0.3));
+
         let rect=  sprite.global_bounds();
 
         let mid_point = Vector2f::new(rect.width/2.0, rect.height /2.0);
         sprite.set_position(self.position - mid_point);
 
 
+
         //self.transform.rotate_with_center(self.angle,self.position.x, self.position.y );
        // transform.transform_rect(&sprite);
         let mut render_states = RenderStates::default();
         let mut transform = Transform::IDENTITY;
-        if self.animation != Movement {
-            transform.rotate_with_center(self.angle,self.position.x,self.position.y);
-           // let matrix = transform.get_matrix();
-            //println!{":? {:?}", matrix};
+
+        match self.animation {
+            Rotation(RotationKind::Naive) => transform.rotate_with_center(self.angle,self.position.x,self.position.y),
+            Rotation(RotationKind::WithFiltering) => {
+                transform = rotate_with_shear(self.angle,self.position);
+            }
+            Movement => {
+                let mut translate = Transform::IDENTITY;
+                translate.translate(self.position.x,self.position.y);
+                let transform_tangent = transform_from_tangent(self.tangent);
+                //transform.translate(-self.position.x,-self.position.y);
+                transform.combine(&translate);
+                transform.combine(&transform_tangent);
+                transform.translate(-self.position.x,-self.position.y);
+            }
         }
-        if self.animation == Movement {
-           // println!("tangent {} {}",self.tangent.x,self.tangent.y);
-            transform = transform_from_tangent(self.tangent);
-        }
+
         render_states.transform = transform;
         // sprite.set_scale(Vector2f::new(0.5,0.5));
         //sprite.rotate(self.angle);
