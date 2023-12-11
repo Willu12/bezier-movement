@@ -81,8 +81,8 @@ impl BezierCurve {
         let n = self.y_tangent_coefficients.len();
 
         let binom = factorials[n-1] / (factorials[n -1 - index] * factorials[index]);
-        self.x_coefficients[index] = binom * (vertices[index + 1].position.x - vertices[index].position.x);
-        self.y_coefficients[index] = binom * (vertices[index + 1].position.y - vertices[index].position.y);
+        self.x_tangent_coefficients[index] = binom * (vertices[index + 1].position.x - vertices[index].position.x);
+        self.y_tangent_coefficients[index] = binom * (vertices[index + 1].position.y - vertices[index].position.y);
     }
 
     pub fn update_tangent_coefficient(&mut self, vertices: &Vec<Vertex>,index: usize) {
@@ -110,8 +110,8 @@ impl BezierCurve {
 
         for i in 0..n-1 {
             let binom = factorials[n-1 -1] / (factorials[n-1 -1 - i] * factorials[i]);
-            self.x_coefficients[i] = binom * (vertices[i + 1].position.x - vertices[i].position.x);
-            self.y_coefficients[i] = binom * (vertices[i + 1].position.y - vertices[i].position.y);
+            self.x_tangent_coefficients[i] = binom * (vertices[i + 1].position.x - vertices[i].position.x);
+            self.y_tangent_coefficients[i] = binom * (vertices[i + 1].position.y - vertices[i].position.y);
         }
     }
 
