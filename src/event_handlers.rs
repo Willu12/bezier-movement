@@ -63,6 +63,7 @@ pub fn build_new_curve(vertices: &mut Vec<Vertex>, points: &mut Vec<CircleShape>
     vertices.remove(vertices.len() - 1);
     bezier_curve.update_coefficients(vertices);
     bezier_curve.update_curve();
+    bezier_curve.update_tangent_curve();
 
     State::Edit
 }

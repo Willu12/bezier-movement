@@ -45,6 +45,7 @@ fn update_bezier_point(bezier_curve: &mut BezierCurve,index: usize,vertices: &Ve
     bezier_curve.update_coefficient(vertices[index].position,index);
     bezier_curve.update_tangent_coefficient(vertices,index);
     bezier_curve.update_curve();
+    bezier_curve.update_tangent_curve();
 }
 
 pub fn get_selected_point_index(vertices: &Vec<Vertex>,position: Vector2f) -> Option<usize> {

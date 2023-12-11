@@ -4,6 +4,7 @@ use sfml::graphics::{RenderStates, RenderTarget, RenderWindow, Sprite, Texture, 
 use sfml::SfBox;
 use sfml::system::Vector2f;
 use crate::image::Animation::{Movement, Rotation};
+use crate::transormations::transform_from_tangent;
 
 const ROTATION_SPEED: f32 = 1.0;
 
@@ -27,17 +28,19 @@ pub struct Image {
     position: Vector2f,
     pub animation: Animation,
     angle: f32,
+    tangent: Vector2f,
 }
 
 impl Image {
     pub fn new(path: &str, position: Vector2f) -> Self {
         let texture = Texture::from_file(path).expect("failed to load Image");
         let transform = Transform::IDENTITY;
-        Image {texture,position,animation: Animation::Movement,angle: 0.0}
+        Image {texture,position,animation: Animation::Movement,angle: 0.0,tangent: Vector2f::new(0.0,0.0)}
     }
 
     pub fn move_picture(&mut self, position: Vector2f, tangent: Vector2f) {
          self.position = position;
+        self.tangent = tangent;
         //calculate transform matrix for angle
 
         //println!("current_angle = {}",self.angle);
@@ -65,6 +68,12 @@ impl Image {
         let mut transform = Transform::IDENTITY;
         if self.animation != Movement {
             transform.rotate_with_center(self.angle,self.position.x,self.position.y);
+           // let matrix = transform.get_matrix();
+            //println!{":? {:?}", matrix};
+        }
+        if self.animation == Movement {
+           // println!("tangent {} {}",self.tangent.x,self.tangent.y);
+            transform = transform_from_tangent(self.tangent);
         }
         render_states.transform = transform;
         // sprite.set_scale(Vector2f::new(0.5,0.5));

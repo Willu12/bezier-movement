@@ -64,6 +64,7 @@ impl BezierCurve {
 
             }
             self.tangent_curve[i] = Vector2f::new(x_coord,y_coord);
+            println!("tangent point {}, {}",x_coord,y_coord);
             t_point = t_point + dt;
         }
 
@@ -121,8 +122,8 @@ impl BezierCurve {
 
     pub fn move_image(&mut self) {
         self.time_index  = (self.time_index + 1 ) % self.curve.len();
-        println!("current time index = {} ",self.time_index);
-        self.image.move_picture(self.curve[self.time_index].position,Vector2f::default());
+        //println!("current time index = {} ",self.time_index);
+        self.image.move_picture(self.curve[self.time_index].position,self.tangent_curve[self.time_index]);
     }
 
     pub fn render(&self, window: &mut RenderWindow) {
