@@ -4,21 +4,22 @@ use sfml::audio::listener::direction;
 use sfml::graphics::Transform;
 use sfml::system::Vector2f;
 
-pub fn transform_from_tangent(tangent: Vector2f) -> Transform {
-
-    let direction = Vector2f::new(1.0,0.0);
-
-    let cos_alfa = tangent.dot(direction) / ( tangent.length_sq() * direction. length_sq()).sqrt();
-
-    //println!("alfa = {}",f32::acos(cos_alfa));
-
-    let sign = if tangent.dot(direction) < 0.0 {1.0} else {-1.0};
-
-
-    let sin_alfa = sign *  (1.0 - cos_alfa.powi(2)).sqrt();
-
-    let transform = Transform::new(cos_alfa,-sin_alfa,0.0,sin_alfa,cos_alfa,0.0,0.0,0.,1.0);
+pub fn rotate_from_tangent(tangent: Vector2f) -> Transform {
+    let normalized_tangent = tangent / (tangent.dot(tangent)).sqrt();
+    let perpendicular = Vector2f::new(-normalized_tangent.y,normalized_tangent.x);
+    let transform = Transform::new(normalized_tangent.x,perpendicular.x,0.,normalized_tangent.y,perpendicular.y,0.,0.,0.,1.);
     return  transform;
+}
+
+pub fn transform_from_tangent(tangent:Vector2f, position: Vector2f) -> Transform {
+
+    let mut transformation = Transform::IDENTITY;
+    transformation.translate(position.x,position.y);
+    let rotate = rotate_from_tangent(tangent);
+    transformation.combine(&rotate);
+    transformation.translate(-position.x,-position.y);
+
+    transformation
 }
 
 pub fn naive_rotation(angle: f32, position: Vector2f) -> Transform {

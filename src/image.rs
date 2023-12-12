@@ -72,18 +72,8 @@ impl Image {
 
         match self.animation {
             Rotation(RotationKind::Naive) => transform.rotate_with_center(self.angle,self.position.x,self.position.y),
-            Rotation(RotationKind::WithFiltering) => {
-                transform = rotate_with_shear(self.angle,self.position);
-            }
-            Movement => {
-                let mut translate = Transform::IDENTITY;
-                translate.translate(self.position.x,self.position.y);
-                let transform_tangent = transform_from_tangent(self.tangent);
-                //transform.translate(-self.position.x,-self.position.y);
-                transform.combine(&translate);
-                transform.combine(&transform_tangent);
-                transform.translate(-self.position.x,-self.position.y);
-            }
+            Rotation(RotationKind::WithFiltering) => transform = rotate_with_shear(self.angle,self.position),
+            Movement => transform = transform_from_tangent(self.tangent,self.position)
         }
 
         render_states.transform = transform;

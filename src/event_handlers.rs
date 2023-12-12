@@ -59,8 +59,9 @@ pub fn build_new_curve(vertices: &mut Vec<Vertex>, points: &mut Vec<CircleShape>
                        bezier_curve: &mut BezierCurve,state: State) -> State {
     if state == State::Edit {return state}
 
-    points.remove(points.len() - 1);
-    vertices.remove(vertices.len() - 1);
+    if vertices.is_empty() {return State::Create};
+    //points.remove(points.len() - 1);
+    //vertices.remove(vertices.len() - 1);
     bezier_curve.update_coefficients(vertices);
     bezier_curve.update_curve();
     bezier_curve.update_tangent_curve();

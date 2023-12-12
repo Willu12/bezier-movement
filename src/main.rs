@@ -29,9 +29,11 @@ fn main() {
     let mut animating: bool = false;
     let mut rotation_kind: RotationKind = RotationKind::Naive;
 
+    let mut is_egui_clicked = false;
+
     let mut rw = RenderWindow::new(
         (800, 600),
-        "krzeslo",
+        "move along bezier",
         Style::CLOSE,
         &ContextSettings::default(),
     );
@@ -42,7 +44,7 @@ fn main() {
 
     while rw.is_open() {
         //check if we changed
-        if state == State::Edit && animating {
+        if state == State::Edit && animating && vertices.is_empty() == false {
 
             bezier_curve.do_frame();
 
@@ -57,7 +59,12 @@ fn main() {
                     rw.close();
                 }
                 Event::MouseButtonReleased {button:_, x,y} => {
-                   selected_node_index =  mouse_click_handler(&mut vertices, &mut points,&mut bezier_curve,selected_node_index,state,x,y);
+                    if is_egui_clicked == false {
+                    selected_node_index =  mouse_click_handler(&mut vertices,
+                                                              &mut points,&mut bezier_curve,
+                                                              selected_node_index,
+                                                              state,x,y);
+                    }
                 }
                 Event::MouseMoved {x,y} => {
                     mouse_move_handler(&mut vertices, &mut points, &mut bezier_curve,selected_node_index,state,x,y);
@@ -68,7 +75,8 @@ fn main() {
         // Step 3: Do an egui frame with the desired ui function
         sfegui
             .do_frame(|ctx| {
-                let win = egui::Window::new("Pierogi z jagodami");
+                let win = egui::Window::new("settings");
+                is_egui_clicked = ctx.is_pointer_over_area();
                 win.show(ctx, |ui| {
 
                     ui.vertical(|ui| {
