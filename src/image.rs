@@ -1,10 +1,8 @@
-use std::f32::consts::PI;
-use egui_sfml::egui::ViewportCommand::Transparent;
-use sfml::graphics::{RenderStates, RenderTarget, RenderWindow, Sprite, Texture, Transform, Transformable};
+use sfml::graphics::{RenderStates, RenderTarget, RenderWindow, Sprite, Texture, Transformable};
 use sfml::SfBox;
 use sfml::system::Vector2f;
 use crate::image::Animation::{Movement, Rotation};
-use crate::transormations::{rotate_with_shear, transform_from_tangent};
+use crate::transormations::{naive_rotation, rotate_with_shear, transform_from_tangent};
 
 const ROTATION_SPEED: f32 = 1.0;
 
@@ -34,8 +32,7 @@ pub struct Image {
 impl Image {
     pub fn new(path: &str, position: Vector2f) -> Self {
         let texture = Texture::from_file(path).expect("failed to load Image");
-        let transform = Transform::IDENTITY;
-        Image {texture,position,animation: Animation::Movement,angle: 0.0,tangent: Vector2f::new(0.0,0.0)}
+        Image {texture,position,animation: Movement,angle: 0.0,tangent: Vector2f::new(0.0,0.0)}
     }
 
     pub fn move_picture(&mut self, position: Vector2f, tangent: Vector2f) {
@@ -68,13 +65,12 @@ impl Image {
         //self.transform.rotate_with_center(self.angle,self.position.x, self.position.y );
        // transform.transform_rect(&sprite);
         let mut render_states = RenderStates::default();
-        let mut transform = Transform::IDENTITY;
 
-        match self.animation {
-            Rotation(RotationKind::Naive) => transform.rotate_with_center(self.angle,self.position.x,self.position.y),
-            Rotation(RotationKind::WithFiltering) => transform = rotate_with_shear(self.angle,self.position),
-            Movement => transform = transform_from_tangent(self.tangent,self.position)
-        }
+        let transform = match self.animation {
+            Rotation(RotationKind::Naive) =>  naive_rotation(self.angle,self.position),
+            Rotation(RotationKind::WithFiltering) => rotate_with_shear(self.angle,self.position),
+            Movement =>  transform_from_tangent(self.tangent,self.position)
+        };
 
         render_states.transform = transform;
         // sprite.set_scale(Vector2f::new(0.5,0.5));

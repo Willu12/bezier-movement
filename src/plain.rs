@@ -3,8 +3,6 @@ use sfml::system::Vector2f;
 use crate::bezier_curve::BezierCurve;
 const STRIP_COLOR: Color = Color::BLUE;
 const POINT_COLOR: Color = Color::RED;
-const CURVE_COLOR: Color = Color::MAGENTA;
-
 #[derive(PartialEq,Copy, Clone)]
 pub enum State {
     Create,
@@ -39,6 +37,8 @@ fn add_point(points: &mut Vec<CircleShape>, position: Vector2f) {
 
 pub fn update_bezier(bezier_curve: &mut BezierCurve,vertices: &Vec<Vertex>) {
     bezier_curve.update_coefficients(vertices);
+    bezier_curve.update_curve();
+    bezier_curve.update_tangent_curve();
 }
 
 fn update_bezier_point(bezier_curve: &mut BezierCurve,index: usize,vertices: &Vec<Vertex>) {

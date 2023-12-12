@@ -1,6 +1,4 @@
 use std::f32::consts::PI;
-use egui_sfml::egui::ViewportCommand::Transparent;
-use sfml::audio::listener::direction;
 use sfml::graphics::Transform;
 use sfml::system::Vector2f;
 

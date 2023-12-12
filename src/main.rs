@@ -3,6 +3,7 @@ mod plain;
 mod event_handlers;
 mod image;
 mod transormations;
+mod serializer;
 
 use egui_sfml::{egui, SfEgui};
 use sfml::{
@@ -10,10 +11,9 @@ use sfml::{
     window::{ContextSettings, Event, Style},
 };
 use sfml::graphics::{CircleShape, Vertex};
-use sfml::system::Vector2f;
 use crate::bezier_curve::BezierCurve;
 use crate::event_handlers::{build_new_curve, mouse_click_handler, mouse_move_handler, start_creating_new_curve};
-use crate::image::{Animation, RotationKind};
+use crate::image::{RotationKind};
 use crate::image::Animation::{Movement, Rotation};
 use crate::plain::{render_points, render_polyline, State};
 
@@ -25,9 +25,9 @@ fn main() {
     let mut bezier_curve: BezierCurve= BezierCurve::new();
     let mut state: State = State::Edit;
     let mut selected_node_index: Option<usize> = None;
-   // let mut image: image::Image = image::Image::new("Data/jeden.png",Vector2f::new(-1000.0,-1000.0));
     let mut animating: bool = false;
     let mut rotation_kind: RotationKind = RotationKind::Naive;
+    let mut polyline_visible: bool = true;
 
     let mut is_egui_clicked = false;
 
@@ -41,18 +41,13 @@ fn main() {
     // Step 1: Create an SfEgui
     let mut sfegui = SfEgui::new(&rw);
 
-
     while rw.is_open() {
         //check if we changed
         if state == State::Edit && animating && vertices.is_empty() == false {
-
             bezier_curve.do_frame();
-
         }
 
-
         while let Some(event) = rw.poll_event() {
-            // Step 2: Collect events from the event loop
             sfegui.add_event(&event);
             match event {
                 Event::Closed => {
@@ -61,9 +56,9 @@ fn main() {
                 Event::MouseButtonReleased {button:_, x,y} => {
                     if is_egui_clicked == false {
                     selected_node_index =  mouse_click_handler(&mut vertices,
-                                                              &mut points,&mut bezier_curve,
+                                                              &mut points,
                                                               selected_node_index,
-                                                              state,x,y);
+                                                              state,x,y,polyline_visible);
                     }
                 }
                 Event::MouseMoved {x,y} => {
@@ -81,6 +76,7 @@ fn main() {
 
                     ui.vertical(|ui| {
 
+                        ui.checkbox(&mut polyline_visible,"polyline visible");
                         ui.label("rotation kind");
                         ui.horizontal(|ui| {
                             ui.radio_value(&mut rotation_kind,RotationKind::Naive,"naive");
@@ -95,10 +91,20 @@ fn main() {
 
                         ui.horizontal(|ui| {
                             if ui.button("Create new curve").clicked() {
-                                state = start_creating_new_curve(&mut vertices, &mut points, &mut bezier_curve, state, animating);
+                                state = start_creating_new_curve(&mut vertices, &mut points, &mut bezier_curve, state);
+                                animating = false;
                             }
                             if ui.button("Finish creating curve").clicked() {
-                                state = build_new_curve(&mut vertices, &mut points, &mut bezier_curve, state);
+                                state = build_new_curve(&mut vertices, &mut bezier_curve, state);
+                            }
+                        });
+                        ui.horizontal(|ui| {
+                            if ui.button("save polyline").clicked() {
+                                serializer::save_polyline(&vertices);
+                            }
+                            if ui.button("load polyline").clicked() {
+                                serializer::load_polyline("Data/polyline.txt",&mut vertices,&mut points,& mut bezier_curve);
+                                state = State::Edit;
                             }
                         });
                         ui.horizontal(|ui| {
@@ -120,11 +126,10 @@ fn main() {
             bezier_curve.render(&mut rw);
         }
 
-
-        render_points(&points,&mut rw);
-        render_polyline(&vertices,&mut rw);
-
-
+        if polyline_visible || state == State::Create {
+            render_points(&points, &mut rw);
+            render_polyline(&vertices, &mut rw);
+        }
 
         sfegui.draw(&mut rw, None);
         rw.display();

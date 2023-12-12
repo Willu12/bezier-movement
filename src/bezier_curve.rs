@@ -116,13 +116,8 @@ impl BezierCurve {
         }
     }
 
-    pub fn update_tangent_coefficients(&mut self, vertices: &Vec<Vertex>) {
-
-    }
-
     pub fn move_image(&mut self) {
         self.time_index  = (self.time_index + 1 ) % self.curve.len();
-        //println!("current time index = {} ",self.time_index);
         self.image.move_picture(self.curve[self.time_index].position,self.tangent_curve[self.time_index]);
     }
 
