@@ -1,6 +1,9 @@
+use sfml::audio::listener::position;
 use sfml::graphics::{CircleShape, Color, PrimitiveType, RenderStates, RenderTarget, RenderWindow, Shape, Transformable, Vertex};
 use sfml::system::Vector2f;
 use crate::bezier_curve::BezierCurve;
+use crate::image::{create_hsv_image, Image};
+
 const STRIP_COLOR: Color = Color::BLUE;
 const POINT_COLOR: Color = Color::RED;
 #[derive(PartialEq,Copy, Clone)]
@@ -97,4 +100,12 @@ fn create_point_shape<'a>(position: Vector2f,radius: f32, color: Color) -> Circl
                                       position.y - circle.radius() / 2.0));
 
     circle
+}
+
+pub fn load_image(bezier_curve: &mut BezierCurve,path: &str) {
+    bezier_curve.image = Image::new(&path,Vector2f::new(0.0,0.0));
+}
+
+pub fn create_image(bezier_curve: &mut BezierCurve) {
+    bezier_curve.image = create_hsv_image();
 }

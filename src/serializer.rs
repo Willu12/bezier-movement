@@ -1,9 +1,11 @@
+use std::fs;
 use std::fs::File;
 use std::io::{LineWriter, Write};
 use sfml::graphics::{CircleShape, Vertex};
 use crate::bezier_curve::BezierCurve;
 use std::fs::read_to_string;
 use sfml::system::Vector2f;
+use crate::image::Image;
 use crate::plain::{add_node, update_bezier};
 
 
@@ -50,4 +52,29 @@ fn load_vertices_from_file(file_path: &str) -> Vec<Vector2f> {
     }
 
     vertices
+}
+
+
+pub fn load_images() -> Vec<String> {
+    let paths = fs::read_dir("Images/").unwrap();
+    let mut images:Vec<String> = vec![];
+
+    for path in paths {
+        let filepath = path.unwrap();
+        let filename = filepath.file_name();
+        let path = filepath.path();
+
+        if path.extension().unwrap() != "png" {
+            continue;
+        }
+
+        let path = path.to_str().unwrap();
+
+        let image = Image::new(path,Vector2f::new(0.0,0.0));
+        images.push(path.to_string());
+    }
+
+
+
+    images
 }

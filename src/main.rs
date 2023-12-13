@@ -11,11 +11,13 @@ use sfml::{
     window::{ContextSettings, Event, Style},
 };
 use sfml::graphics::{CircleShape, Vertex};
+use sfml::system::Vector2;
 use crate::bezier_curve::BezierCurve;
 use crate::event_handlers::{build_new_curve, mouse_click_handler, mouse_move_handler, start_creating_new_curve};
-use crate::image::{RotationKind};
+use crate::image::{Image, RotationKind};
 use crate::image::Animation::{Movement, Rotation};
-use crate::plain::{render_points, render_polyline, State};
+use crate::plain::{create_image, render_points, render_polyline, State};
+use crate::serializer::load_images;
 
 fn main() {
 
@@ -28,8 +30,10 @@ fn main() {
     let mut animating: bool = false;
     let mut rotation_kind: RotationKind = RotationKind::Naive;
     let mut polyline_visible: bool = true;
-
     let mut is_egui_clicked = false;
+    let mut selected_image_index: usize = 0;
+
+    let images: Vec<String> = load_images();
 
     let mut rw = RenderWindow::new(
         (800, 600),
@@ -115,12 +119,28 @@ fn main() {
                                 animating = false;
                             }
                         });
+                        ui.horizontal(|ui| {
+                            if ui.button("Load Image").clicked() {
+                                bezier_curve.image = Image::new(&images[selected_image_index],Vector2::new(0.0,0.0));
+                            }
+                            if ui.button("create new Image").clicked() {
+                                create_image(&mut bezier_curve);
+                            }
+                        });
+
+                        ui.label("image list");
+
+                        for (index,image) in images.iter().enumerate() {
+                            if ui.button(image).clicked() {
+                                selected_image_index = index;
+                            }
+                        }
                     });
                 });
             })
             .unwrap();
         // Step 4: Draw
-        rw.clear(Color::rgb(0, 0, 0));
+        rw.clear(Color::rgb(100, 100, 100));
 
         if state == State::Edit {
             bezier_curve.render(&mut rw);

@@ -41,6 +41,7 @@ name = "bezier-movement"
 version = "0.1.0"
 dependencies = [
  "egui-sfml",
+ "hsv",
  "sfml",
 ]
 
@@ -126,6 +127,12 @@ checksum = "b96e6aab9cc22fe28d706c0efb380f1825d660a27ccf9a26591fb327905cc3f3"
 dependencies = [
  "libc",
 ]
+
+[[package]]
+name = "hsv"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a03664f940932e7453c5f1dd0ce278a7af2ff47d440fad00f679b4f5bf0da869"
 
 [[package]]
 name = "libc"
