@@ -17,7 +17,7 @@ pub struct BezierCurve {
 
 impl BezierCurve {
     pub fn new() -> Self {
-        let image = Image::new("Data/jeden.png",Vector2f::new(-999.0,-999.0));
+        let image = Image::new("Data/image.png",Vector2f::new(-999.0,-999.0));
         let time_index = 0;
         BezierCurve{curve: vec![], tangent_curve: vec![],x_coefficients:vec![],y_coefficients:vec![],
             x_tangent_coefficients: vec![], y_tangent_coefficients: vec![],image,time_index}

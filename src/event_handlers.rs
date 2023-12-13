@@ -39,8 +39,7 @@ pub fn mouse_move_handler(vertices: &mut Vec<Vertex>, points: &mut Vec<CircleSha
 }
 
 pub fn start_creating_new_curve(vertices: &mut Vec<Vertex>, points: &mut Vec<CircleShape>,
-                                bezier_curve: &mut BezierCurve,state: State) -> State {
-    //if state == State::Create {return state}
+                                bezier_curve: &mut BezierCurve) -> State {
     vertices.clear();
     points.clear();
     bezier_curve.clear();

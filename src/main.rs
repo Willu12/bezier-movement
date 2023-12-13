@@ -91,7 +91,7 @@ fn main() {
 
                         ui.horizontal(|ui| {
                             if ui.button("Create new curve").clicked() {
-                                state = start_creating_new_curve(&mut vertices, &mut points, &mut bezier_curve, state);
+                                state = start_creating_new_curve(&mut vertices, &mut points, &mut bezier_curve);
                                 animating = false;
                             }
                             if ui.button("Finish creating curve").clicked() {
