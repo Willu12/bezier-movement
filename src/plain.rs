@@ -1,4 +1,3 @@
-use sfml::audio::listener::position;
 use sfml::graphics::{CircleShape, Color, PrimitiveType, RenderStates, RenderTarget, RenderWindow, Shape, Transformable, Vertex};
 use sfml::system::Vector2f;
 use crate::bezier_curve::BezierCurve;
@@ -102,6 +101,7 @@ fn create_point_shape<'a>(position: Vector2f,radius: f32, color: Color) -> Circl
     circle
 }
 
+#[allow(dead_code)] 
 pub fn load_image(bezier_curve: &mut BezierCurve,path: &str) {
     bezier_curve.image = Image::new(&path,Vector2f::new(0.0,0.0));
 }

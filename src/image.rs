@@ -1,7 +1,6 @@
-use egui_sfml::egui::Area;
 use hsv::hsv_to_rgb;
-use sfml::graphics::{IntRect, RenderStates, RenderTarget, RenderWindow, Sprite, Texture, Transformable};
-use sfml::{graphics, SfBox};
+use sfml::graphics::{RenderStates, RenderTarget, RenderWindow, Sprite, Texture, Transformable};
+use sfml::{SfBox};
 use sfml::system::Vector2f;
 use crate::image::Animation::{Movement, Rotation};
 use crate::transormations::{naive_rotation, rotate_with_shear, transform_from_tangent};

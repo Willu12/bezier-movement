@@ -5,7 +5,6 @@ use sfml::graphics::{CircleShape, Vertex};
 use crate::bezier_curve::BezierCurve;
 use std::fs::read_to_string;
 use sfml::system::Vector2f;
-use crate::image::Image;
 use crate::plain::{add_node, update_bezier};
 
 
@@ -61,7 +60,6 @@ pub fn load_images() -> Vec<String> {
 
     for path in paths {
         let filepath = path.unwrap();
-        let filename = filepath.file_name();
         let path = filepath.path();
 
         if path.extension().unwrap() != "png" {
@@ -70,7 +68,7 @@ pub fn load_images() -> Vec<String> {
 
         let path = path.to_str().unwrap();
 
-        let image = Image::new(path,Vector2f::new(0.0,0.0));
+        //let image = Image::new(path,Vector2f::new(0.0,0.0));
         images.push(path.to_string());
     }
 
