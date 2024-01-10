@@ -25,6 +25,7 @@ pub fn load_polyline(file_path: &str, vertices: &mut Vec<Vertex>, points: &mut V
     bezier_curve.clear();
 
     let positions = load_vertices_from_file(file_path);
+    if positions.is_empty() {return}
 
     for position in positions {
         add_node(vertices,points,position.x as i32,position.y as i32);
