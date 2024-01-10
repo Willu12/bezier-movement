@@ -27,14 +27,15 @@ pub fn naive_rotation(angle: f32, position: Vector2f) -> Transform {
     transform
 }
 
-pub fn rotate_with_shear(angle: f32, position: Vector2f) -> Transform {
+pub fn rotate_with_shear(mut angle: f32, position: Vector2f) -> Transform {
     let mut transform = Transform::IDENTITY;
-
+    
     let mut translate = Transform::IDENTITY;
     translate.translate(position.x,position.y);
     let mut reverse_translate = Transform::IDENTITY;
     reverse_translate.translate(-position.x,-position.y);
 
+    if (angle/2.0 + 90.0) % 180.0 == 0.0 {angle += 1.0} //ensure tg_alfa_half exists
     let radian = PI * angle / 180.0;
 
     let tg_alfa_half = f32::tan(radian / 2.0);
